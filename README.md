@@ -1,43 +1,122 @@
-## Running Tests
+# WellFix - Laptop Repair Service Platform
 
-This project uses pytest for testing. To run tests successfully, you'll need to make sure environment variables are set correctly. We've provided a helper script to fix common issues:
+A comprehensive FastAPI-based backend service for managing laptop repair operations, including customer requests, engineer assignments, and admin workflows.
 
-```bash
-# Fix environment variables and run all tests
-python fix_settings.py --run-tests
+## Features
 
-# Fix environment variables and run specific tests
-python fix_settings.py --run-tests tests/api/v1/test_service_areas.py
+- **User Management**
+  - Role-based access (Customer, Engineer, Admin)
+  - Secure authentication with JWT
+  - Profile and address management
 
-# Only fix environment variables (no tests)
-python fix_settings.py
+- **Job Management**
+  - Complete repair job lifecycle
+  - Status tracking and updates
+  - On-site and lab repair workflows
+  - Quote management and approvals
+
+- **Service Area Management**
+  - Pincode-based service area definition
+  - Automated serviceability checks
+
+- **Admin Features**
+  - Engineer assignment
+  - Service area management
+  - Pricing configuration
+  - Performance reporting
+
+- **Rating System**
+  - Customer feedback
+  - Engineer performance tracking
+
+## Tech Stack
+
+- **Framework**: FastAPI
+- **Database**: PostgreSQL with SQLAlchemy ORM
+- **Authentication**: JWT-based token authentication
+- **Testing**: pytest
+- **Load Testing**: Locust
+- **Documentation**: OpenAPI/Swagger
+
+## Project Structure
+
+```
+wellfix_api/
+├── api/            # API endpoints and routers
+├── core/           # Core functionality (config, db, security)
+├── crud/           # Database CRUD operations
+├── models/         # SQLAlchemy models
+├── schemas/        # Pydantic schemas
+└── services/       # Business logic services
+
+tests/              # Test suites
+docs/               # Documentation
+alembic/            # Database migrations
 ```
 
-### Test Coverage
+## Getting Started
 
-To check the test coverage of the codebase, use the included coverage script:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ankushsalviweb/wellfix-api.git
+   cd wellfix-api
+   ```
 
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Linux/Mac
+   # or
+   .\venv\Scripts\activate  # Windows
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+5. Run database migrations:
+   ```bash
+   alembic upgrade head
+   ```
+
+6. Start the development server:
+   ```bash
+   uvicorn wellfix_api.main:app --reload
+   ```
+
+## Testing
+
+Run the test suite:
 ```bash
-# Run coverage on all tests
+python -m pytest
+```
+
+Run with coverage:
+```bash
 python run_coverage.py
-
-# Run coverage on specific tests
-python run_coverage.py tests/api/v1/test_service_areas.py
 ```
 
-This will generate both console output and an HTML report in the `htmlcov` directory.
+## API Documentation
 
-### Common Issues
+Once the server is running, access:
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
 
-- **Environment Variables with Comments**: Ensure environment variables in `.env` files don't have inline comments. 
-  For example, use `ACCESS_TOKEN_EXPIRE_MINUTES=1440` instead of `ACCESS_TOKEN_EXPIRE_MINUTES=1440 # 1 day`.
-  The `fix_settings.py` script can automatically fix these issues.
+## License
 
-### Test Organization
+[MIT License](LICENSE)
 
-The tests are organized as follows:
+## Contributing
 
-- `tests/api/`: Integration tests for API endpoints
-- `tests/crud/`: Unit tests for CRUD operations
-- `tests/models/`: Unit tests for database models
-- `tests/core/`: Tests for core functionality like config and dependencies 
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request 
