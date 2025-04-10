@@ -1,0 +1,69 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# WellFix - Non-Functional Requirements (NFRs)
+
+**Version:** 1.0
+**Date:** 2023-10-27
+
+This document details the non-functional requirements for the WellFix application, outlining the expected quality attributes and constraints of the system. These requirements complement the functional specifications found in `docs/functional-requirements.md` and influence the design choices described in `docs/architecture-overview.md` and `docs/data-models.md`.
+
+---
+
+## 1. Responsiveness
+
+*   **Requirement:** The web application interface must be fully responsive, providing an optimal viewing and interaction experience across a wide range of devices, from standard desktops (e.g., 1920px width) down to common mobile screen sizes (e.g., 360px width).
+*   **Details:** Layouts should adapt gracefully, ensuring readability and usability without requiring excessive horizontal scrolling. Navigation elements should adjust for smaller screens (e.g., collapsing menus). Touch targets on mobile must be appropriately sized.
+*   **Rationale:** To ensure usability for customers, engineers, and potentially admins accessing the system via different devices (as stated in PRD Goal 3).
+
+## 2. Usability
+
+*   **Requirement:** The application interface must be intuitive and easy to learn for each defined user role (Customer, Engineer, Admin).
+*   **Details:** Workflows should be logical and follow common web conventions. Forms should be clear, provide necessary validation feedback (client-side and server-side), and minimize unnecessary steps. Error messages should be user-friendly and informative. Consistent terminology and visual design should be used throughout the application.
+*   **Rationale:** To maximize efficiency and user satisfaction, minimize support requests, and ensure smooth adoption (PRD Goal 3, 1).
+
+## 3. Performance
+
+*   **Requirement:** The application should feel responsive to user interactions under expected load conditions.
+*   **Details:**
+    *   **API Response Times:** Core API endpoints (e.g., fetching job lists, viewing job details, updating status) should typically respond within 500ms under normal load (excluding network latency).
+    *   **Page Load Times:** Key pages (dashboard, job list, job detail) should aim for a Largest Contentful Paint (LCP) of under 2.5 seconds on a standard connection.
+    *   **Database Queries:** Complex queries, especially for reporting (Section 4.8 in functional requirements), should be optimized to avoid timeouts or excessive load. Use appropriate indexing based on `docs/data-models.md`.
+*   **Rationale:** To ensure a positive user experience and maintain operational efficiency, especially for admins and engineers managing multiple jobs.
+*   **Context:** Initial scale is small (single city), but design should not preclude reasonable performance scaling.
+
+## 4. Reliability
+
+*   **Requirement:** The system must be stable and operate predictably, minimizing downtime and data loss.
+*   **Details:**
+    *   **Error Handling:** Implement comprehensive error handling on the backend, logging unexpected errors for investigation, and returning appropriate error codes/messages to the frontend. Follow practices outlined in `rules/python-error-handling-and-logging-rule.mdc`.
+    *   **Logging:** Implement structured logging to track key events, errors, and potential security issues, facilitating debugging and monitoring. Follow practices outlined in `rules/python-error-handling-and-logging-rule.mdc`.
+    *   **Data Integrity:** Use database constraints (foreign keys, non-null checks based on `docs/data-models.md`) to ensure data validity. Validate data at API boundaries.
+    *   **Availability:** Aim for high availability during business hours (specific uptime percentage TBD based on deployment choice).
+*   **Rationale:** Essential for a business-critical operational tool. Ensures trust and prevents disruption to repair workflows.
+
+## 5. Security
+
+*   **Requirement:** The application must protect user data and prevent unauthorized access.
+*   **Details:**
+    *   **Authentication:** Secure password hashing (e.g., bcrypt) must be used for `User` passwords. Implement session management securely (e.g., secure HTTP-only cookies).
+    *   **Authorization:** Robust Role-Based Access Control (RBAC) must be enforced on all relevant API endpoints to prevent users from accessing data or performing actions outside their designated role (`User.role`).
+    *   **Input Validation:** Sanitize and validate all user inputs on the server-side to prevent common web vulnerabilities (e.g., Cross-Site Scripting (XSS), SQL Injection).
+    *   **Dependencies:** Keep software dependencies (OS, Python, libraries) updated to patch known vulnerabilities. `rules/python-dependency-management-rule.mdc` helps track dependencies.
+    *   **Data Privacy:** Sensitive data should be handled appropriately (e.g., avoid logging passwords).
+*   **Rationale:** Protect customer privacy, engineer data, and business operational details. Maintain trust and comply with potential data protection regulations.
+
+## 6. Maintainability
+
+*   **Requirement:** The codebase should be easy to understand, modify, test, and debug.
+*   **Details:**
+    *   **Modularity:** Adhere to the modular design outlined in `docs/architecture-overview.md` (Section 3), ensuring loose coupling and high cohesion within modules. Follow principles in `rules/python-modular-design-rule.mdc`.
+    *   **Code Style:** Strictly follow a defined Python code style (e.g., PEP 8, potentially enforced with tools like Black, Flake8). See `rules/python-code-style-consistency-rule.mdc`.
+    *   **Documentation:** Document code (docstrings for public modules/functions/classes) and complex logic where necessary. API endpoints should be automatically documented (a benefit of FastAPI). Adhere to `rules/python-documentation-rule.mdc`.
+    *   **Project Structure:** Follow the defined project structure consistently. See `rules/python-project-structure-rule.mdc`.
+    *   **Configuration:** Manage configuration externally (environment variables, config files) as per `rules/python-configuration-management-rule.mdc`.
+    *   **Testing:** Implement unit and potentially integration tests for core business logic and API endpoints to ensure changes don't break existing functionality.
+    *   **AI Friendliness:** Write clear, understandable code as per `rules/python-ai-friendly-coding-practices-rule.mdc` to facilitate assistance and future analysis.
+*   **Rationale:** Reduce the cost and effort of future development, bug fixing, and feature enhancements. Enable efficient onboarding of new developers. 
